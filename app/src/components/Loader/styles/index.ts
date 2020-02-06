@@ -11,11 +11,8 @@ const react: Styles = {
 
 export const useStyles = createUseStyles({
 	container: {
-		width: "100%",
-		height: "100%",
-		position: "relative",
-		top: "45%",
-		left: "50%"
+		display: "flex",
+		justifyContent: "center"
 	},
 	barsContainer: {
 		width: 50,

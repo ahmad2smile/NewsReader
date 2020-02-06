@@ -15,7 +15,6 @@ import { useStyles } from "./styles";
 const Dashboard = () => {
 	const classes = useStyles();
 
-	const [error, setError] = useState("");
 	const [
 		{ results: articles, total, currentPage, pageSize, pages },
 		setArticleResults
@@ -28,10 +27,21 @@ const Dashboard = () => {
 		startIndex: 1,
 		total: 0
 	});
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(true);
 
 	const [search, setSearch] = useState("");
 	const [orderBy, setOrderBy] = useState(OrderBy.Newest);
 	const debouncedSearch = useDebounce(search, 500);
+
+	const requestArticles = (search: string, newFilter: Pagination) => {
+		setLoading(true);
+
+		getArticles(search, newFilter)
+			.then(setArticleResults)
+			.catch(apiErrorHandler(setError))
+			.finally(() => setLoading(false));
+	};
 
 	useEffect(() => {
 		requestArticles(debouncedSearch, {
@@ -40,11 +50,6 @@ const Dashboard = () => {
 			page: 1
 		});
 	}, [debouncedSearch, orderBy]);
-
-	const requestArticles = (search: string, newFilter: Pagination) =>
-		getArticles(search, newFilter)
-			.then(setArticleResults)
-			.catch(apiErrorHandler(setError));
 
 	useEffect(() => {
 		requestArticles("", { page: 1, pageSize: 10, orderBy: OrderBy.Newest });
@@ -77,7 +82,9 @@ const Dashboard = () => {
 			/>
 			{error ? (
 				<div className={classes.error}>{error}</div>
-			) : articles.length ? (
+			) : loading ? (
+				<Loader />
+			) : (
 				<>
 					<h4>News</h4>
 					<p>Total: {total}</p>
@@ -99,8 +106,6 @@ const Dashboard = () => {
 						onPageSizeChange={handlePageSizeChange}
 					/>
 				</>
-			) : (
-				<Loader />
 			)}
 		</div>
 	);
