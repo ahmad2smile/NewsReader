@@ -1,11 +1,14 @@
 import axios, { Canceler } from "axios";
 import { PaginatedResult, Pagination, Article } from "shared";
 
-const appBaseUrl = "http://localhost:3005/api";
+const appBaseUrl =
+	process.env.NODE_ENV === "production"
+		? "/api"
+		: "http://localhost:3005/api";
 
 const api = axios.create({
 	baseURL: appBaseUrl,
-	timeout: 15000
+	timeout: 30000
 });
 
 const CancelToken = axios.CancelToken;
