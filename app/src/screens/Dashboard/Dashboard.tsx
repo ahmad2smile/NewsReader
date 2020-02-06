@@ -7,43 +7,71 @@ import { getArticles } from "../../services/dataService";
 
 import { useStyles } from "./styles";
 import Filter from "./Filter/Filter";
+import PaginationComponent from "./PaginationComponent/PaginationComponent";
+import { useDebounce } from "./Filter/utils/debounceHook";
 
 const Dashboard = () => {
 	const classes = useStyles();
 
 	const [error, setError] = useState("");
-	const [{ results: articles, total }, setArticles] = useState<
-		PaginatedResult<Article>
-	>({
+	const [
+		{ results: articles, total, currentPage, pageSize, pages },
+		setArticleResults
+	] = useState<PaginatedResult<Article>>({
 		results: [],
 		orderBy: OrderBy.Newest,
 		pageSize: 10,
 		currentPage: 1,
-		pages: 10,
+		pages: 1,
 		startIndex: 1,
-		total: 100
+		total: 0
 	});
+
+	const [search, setSearch] = useState("");
+	const [orderBy, setOrderBy] = useState(OrderBy.Newest);
+	const debouncedSearch = useDebounce(search, 500);
+
+	useEffect(() => {
+		requestArticles(debouncedSearch, {
+			orderBy,
+			pageSize: 10,
+			page: 1
+		});
+	}, [debouncedSearch]);
 
 	const requestArticles = (search: string, newFilter: Pagination) =>
 		getArticles(search, newFilter)
-			.then(setArticles)
-			.catch(setError);
+			.then(setArticleResults)
+			.catch(err => setError(err.message));
 
 	useEffect(() => {
 		requestArticles("", { page: 1, pageSize: 10, orderBy: OrderBy.Newest });
 	}, []);
 
-	const handleFilter = (value: string, orderBy: OrderBy) => {
-		requestArticles(value, {
+	const handlePageNavigation = (page: number) => {
+		requestArticles(search, {
 			orderBy,
 			pageSize: 10,
-			page: 1
+			page
+		});
+	};
+
+	const handlePageSizeChange = (pageSize: number) => {
+		requestArticles(search, {
+			orderBy,
+			pageSize,
+			page: currentPage
 		});
 	};
 
 	return (
 		<div className={classes.container}>
-			<Filter onFilter={handleFilter} />
+			<Filter
+				search={search}
+				onSearch={setSearch}
+				orderBy={orderBy}
+				onOrderBy={setOrderBy}
+			/>
 			{error ? (
 				<div className={classes.error}>{error}</div>
 			) : (
@@ -60,6 +88,13 @@ const Dashboard = () => {
 							</div>
 						))}
 					</div>
+					<PaginationComponent
+						currentPage={currentPage}
+						pageSize={pageSize}
+						pages={pages}
+						onPageNavigation={handlePageNavigation}
+						onPageSizeChange={handlePageSizeChange}
+					/>
 				</>
 			)}
 		</div>
