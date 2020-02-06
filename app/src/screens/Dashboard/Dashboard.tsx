@@ -39,7 +39,7 @@ const Dashboard = () => {
 			pageSize: 10,
 			page: 1
 		});
-	}, [debouncedSearch]);
+	}, [debouncedSearch, orderBy]);
 
 	const requestArticles = (search: string, newFilter: Pagination) =>
 		getArticles(search, newFilter)
