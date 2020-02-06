@@ -11,7 +11,15 @@ export const useStyles = createUseStyles({
 	imgContainer: {
 		display: "flex",
 		flexWrap: "wrap",
-		justifyContent: "center"
+		justifyContent: "center",
+		color: "transparent",
+		minHeight: 120,
+		"& img:before": {
+			content: "' '",
+			display: "block",
+			height: 120,
+			background: "center / contain no-repeat url(logo512.png)"
+		}
 	},
 	detailsContainer: {
 		display: "flex",
