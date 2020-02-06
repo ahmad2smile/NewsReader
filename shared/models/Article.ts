@@ -1,9 +1,8 @@
 export interface Article {
 	id: string;
-	sectionId: string;
-	sectionName: string;
-	webPublicationDate: string;
-	webTitle: string;
-	webUrl: string;
-	apiUrl: string;
+	date: string;
+	title: string;
+	url: string;
+	description: string;
+	thumbnail: string;
 }
