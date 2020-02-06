@@ -5,8 +5,17 @@ export const useStyles = createUseStyles({
 		display: "flex",
 		flexDirection: "column",
 		height: 350,
-		maxWidth: 200,
-		overflow: "hidden"
+		maxWidth: 230,
+		overflow: "hidden",
+		cursor: "pointer",
+		transition: "transform .2s",
+		transform: "scale(1)",
+		boxShadow: "none",
+		"&:hover": {
+			transform: "scale(1.05)",
+			boxShadow:
+				"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"
+		}
 	},
 	imgContainer: {
 		display: "flex",
@@ -26,7 +35,7 @@ export const useStyles = createUseStyles({
 		flexDirection: "column",
 		justifyContent: "space-between",
 		flexGrow: 3,
-		margin: "10px 0"
+		padding: 15
 	},
 	title: {
 		margin: 0,
