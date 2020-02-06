@@ -6,6 +6,7 @@ import ArticleCard from "./ArticleCard/ArticleCard";
 import { getArticles } from "../../services/dataService";
 
 import { useStyles } from "./styles";
+import Filter from "./Filter/Filter";
 
 const Dashboard = () => {
 	const classes = useStyles();
@@ -23,23 +24,32 @@ const Dashboard = () => {
 		total: 100
 	});
 
-	const requestArticles = (newFilter: Pagination) =>
-		getArticles("", newFilter)
+	const requestArticles = (search: string, newFilter: Pagination) =>
+		getArticles(search, newFilter)
 			.then(setArticles)
 			.catch(setError);
 
 	useEffect(() => {
-		requestArticles({ page: 1, pageSize: 10, orderBy: OrderBy.Newest });
+		requestArticles("", { page: 1, pageSize: 10, orderBy: OrderBy.Newest });
 	}, []);
+
+	const handleFilter = (value: string, orderBy: OrderBy) => {
+		requestArticles(value, {
+			orderBy,
+			pageSize: 10,
+			page: 1
+		});
+	};
 
 	return (
 		<div className={classes.container}>
+			<Filter onFilter={handleFilter} />
 			{error ? (
 				<div className={classes.error}>{error}</div>
 			) : (
 				<>
-					<div>News</div>
-					<div>Total: {total}</div>
+					<h4>News</h4>
+					<p>Total: {total}</p>
 					<div className={classes.articles}>
 						{articles.map(article => (
 							<div
