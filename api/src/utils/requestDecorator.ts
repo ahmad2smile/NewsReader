@@ -13,7 +13,7 @@ export function RequestHandler<TResult>() {
 			} catch (err) {
 				res.status(500).json({
 					message:
-						err.response.data.response.message ||
+						err.response?.data?.response?.message ||
 						err.message ||
 						"Something went wrong. Please try again!"
 				});
