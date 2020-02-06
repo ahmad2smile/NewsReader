@@ -1,10 +1,21 @@
 import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+
 import { articleRouter } from "./Article/router";
 
 // tslint:disable-next-line: no-var-requires
 require("dotenv").config();
 
 const app = express();
+
+app.use(helmet());
+
+app.use(
+	cors({
+		origin: "http://localhost:3000"
+	})
+);
 
 app.use(express.json());
 
