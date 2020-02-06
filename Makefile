@@ -14,7 +14,7 @@ move-app-contents: clean-public
 	cp -r app/build/* api/dist/public/
 install:
 	cd shared && npm i && npm run build && cd ../api && npm i && cd ../app && npm i
-build: build-app move-app-contents
+build: install build-app move-app-contents
 	cd api && npm run build
-start: install build
+start: build
 	cd api && npm run start
