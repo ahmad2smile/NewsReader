@@ -10,6 +10,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-jss": "^10.0.4",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.1",
     "shared": "../shared"
   },
@@ -35,6 +36,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-router-dom": "^5.1.3",
     "typescript": "^3.7.5"
   }
 }

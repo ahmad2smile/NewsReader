@@ -1,11 +1,7 @@
 import { createUseStyles } from "react-jss";
 
 export const useStyles = createUseStyles({
-	container: {
-		"& h1": {
-			marginLeft: 15
-		}
-	},
+	container: {},
 	"@global": {
 		".selectContainer": {
 			display: "flex",

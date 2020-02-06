@@ -33,3 +33,9 @@ export const getArticles = async (
 
 	return response.data;
 };
+
+export const getArticleDetails = async (id: string): Promise<Article> => {
+	const response = await api.get(`/articles/details?id=${id}`);
+
+	return response.data;
+};

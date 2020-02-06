@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Article } from "shared";
 
 import { useStyles } from "./styles";
@@ -19,9 +20,12 @@ const ArticleCard = ({ article }: IProps) => {
 				<h4 className={classes.title}>{article.title}</h4>
 				<p className={classes.description}>{article.description}</p>
 				<div className={classes.links}>
-					<a href="#details" className={classes.details}>
+					<Link
+						to={`/article/${article.id}`}
+						className={classes.details}
+					>
 						Details
-					</a>
+					</Link>
 					<a
 						href={article.url}
 						target="__blank"

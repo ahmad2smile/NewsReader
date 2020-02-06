@@ -3,6 +3,7 @@ import { PaginatedResult, Article, Pagination, OrderBy } from "shared";
 
 import Filter from "./Filter/Filter";
 import ArticleCard from "./ArticleCard/ArticleCard";
+import Loader from "../../components/Loader/Loader";
 import PaginationComponent from "./PaginationComponent/PaginationComponent";
 
 import { getArticles, isRequestCanceled } from "../../services/dataService";
@@ -67,6 +68,7 @@ const Dashboard = () => {
 
 	return (
 		<div className={classes.container}>
+			<h1>News Reader</h1>
 			<Filter
 				search={search}
 				onSearch={setSearch}
@@ -75,7 +77,7 @@ const Dashboard = () => {
 			/>
 			{error ? (
 				<div className={classes.error}>{error}</div>
-			) : (
+			) : articles.length ? (
 				<>
 					<h4>News</h4>
 					<p>Total: {total}</p>
@@ -97,6 +99,8 @@ const Dashboard = () => {
 						onPageSizeChange={handlePageSizeChange}
 					/>
 				</>
+			) : (
+				<Loader />
 			)}
 		</div>
 	);
