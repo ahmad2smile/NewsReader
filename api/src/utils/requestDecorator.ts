@@ -4,18 +4,20 @@ export function RequestHandler<TResult>() {
 	return (target: any, key: string, descriptor: PropertyDescriptor) => {
 		const original = descriptor.value;
 
-		descriptor.value = function(req: Request, res: Response) {
-			original
-				.apply(this, [req, res])
-				.then((response: TResult) => res.json(response))
-				.catch((err: any) =>
-					res.status(500).json({
-						error: {
-							message: "something went wrong.",
-							details: err.message
-						}
-					})
-				);
+		// tslint:disable-next-line: only-arrow-functions
+		descriptor.value = async function(req: Request, res: Response) {
+			try {
+				const result: TResult = await original.apply(this, [req, res]);
+
+				res.json(result);
+			} catch (err) {
+				res.status(500).json({
+					error: {
+						message: "something went wrong.",
+						details: err.message
+					}
+				});
+			}
 		};
 	};
 }

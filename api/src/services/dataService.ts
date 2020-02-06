@@ -53,3 +53,24 @@ export const fetchArticles = async (
 
 	return paginatedResult;
 };
+
+export const articleDetails = async (id: string): Promise<Article> => {
+	const response = await guardianApi.get(`/${id}`, {
+		params: {
+			"show-fields": "thumbnail,body"
+		}
+	});
+
+	const content = response.data.response.content;
+
+	const article: Article = {
+		id: content.id,
+		date: content.webPublicationDate,
+		title: content.webTitle,
+		url: content.webUrl,
+		body: content.fields?.body,
+		thumbnail: content.fields?.thumbnail
+	};
+
+	return article;
+};

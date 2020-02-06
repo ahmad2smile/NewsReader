@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 
 import { ArticleController } from "./ArticleController";
 
@@ -8,6 +8,6 @@ export const articleRouter = express.Router({
 
 const controller = new ArticleController();
 
-articleRouter.get("/", (req: Request, res: Response) => {
-	controller.get(req, res);
-});
+articleRouter.get("/details", controller.details);
+
+articleRouter.get("/", controller.get);
