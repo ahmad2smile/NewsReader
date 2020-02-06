@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { PaginatedResult, Article, Pagination, OrderBy } from "shared";
 
+import Filter from "./Filter/Filter";
 import ArticleCard from "./ArticleCard/ArticleCard";
+import PaginationComponent from "./PaginationComponent/PaginationComponent";
 
-import { getArticles } from "../../services/dataService";
+import { getArticles, isRequestCanceled } from "../../services/dataService";
+
+import { useDebounce } from "./Filter/utils/debounceHook";
 
 import { useStyles } from "./styles";
-import Filter from "./Filter/Filter";
-import PaginationComponent from "./PaginationComponent/PaginationComponent";
-import { useDebounce } from "./Filter/utils/debounceHook";
 
 const Dashboard = () => {
 	const classes = useStyles();
@@ -42,7 +43,7 @@ const Dashboard = () => {
 	const requestArticles = (search: string, newFilter: Pagination) =>
 		getArticles(search, newFilter)
 			.then(setArticleResults)
-			.catch(err => setError(err.message));
+			.catch(isRequestCanceled(setError));
 
 	useEffect(() => {
 		requestArticles("", { page: 1, pageSize: 10, orderBy: OrderBy.Newest });
