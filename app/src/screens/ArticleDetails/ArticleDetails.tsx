@@ -5,7 +5,7 @@ import { Article } from "shared";
 import Title from "../../components/Title/Title";
 import Loader from "../../components/Loader/Loader";
 
-import { getArticleDetails } from "../../services/dataService";
+import { getArticleDetails, apiErrorHandler } from "../../services/dataService";
 
 import { useStyles } from "./styles";
 
@@ -20,11 +20,11 @@ const ArticleDetails = () => {
 	useEffect(() => {
 		getArticleDetails(id)
 			.then(setArticle)
-			.catch(err => setError(err.message));
+			.catch(apiErrorHandler(setError));
 	}, [id]);
 
 	return (
-		<Title title={(article && article.title) || "Loading..."}>
+		<Title title={(article && article.title) || error || "Loading..."}>
 			<div className={classes.container}>
 				<Link to="/" className={classes.backButton}>
 					{"<"} Dashboard

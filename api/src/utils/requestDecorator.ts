@@ -12,10 +12,10 @@ export function RequestHandler<TResult>() {
 				res.json(result);
 			} catch (err) {
 				res.status(500).json({
-					error: {
-						message: "something went wrong.",
-						details: err.message
-					}
+					message:
+						err.response.data.response.message ||
+						err.message ||
+						"Something went wrong. Please try again!"
 				});
 			}
 		};

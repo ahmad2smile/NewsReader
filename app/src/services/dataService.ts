@@ -11,11 +11,14 @@ const api = axios.create({
 const CancelToken = axios.CancelToken;
 let cancel: Canceler;
 
-export const isRequestCanceled = (callBack: Function) => (error: Error) => {
+export const apiErrorHandler = (callBack: Function) => (error: any) => {
 	if (axios.isCancel(error)) {
 		console.log("Request canceled", error.message);
 	} else {
-		callBack(error.message);
+		const message =
+			error.response?.data?.message ||
+			"Something went wrong. Please try again!";
+		callBack(message);
 	}
 };
 

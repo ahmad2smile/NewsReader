@@ -6,7 +6,7 @@ import ArticleCard from "./ArticleCard/ArticleCard";
 import Loader from "../../components/Loader/Loader";
 import PaginationComponent from "./PaginationComponent/PaginationComponent";
 
-import { getArticles, isRequestCanceled } from "../../services/dataService";
+import { getArticles, apiErrorHandler } from "../../services/dataService";
 
 import { useDebounce } from "./Filter/utils/debounceHook";
 
@@ -44,7 +44,7 @@ const Dashboard = () => {
 	const requestArticles = (search: string, newFilter: Pagination) =>
 		getArticles(search, newFilter)
 			.then(setArticleResults)
-			.catch(isRequestCanceled(setError));
+			.catch(apiErrorHandler(setError));
 
 	useEffect(() => {
 		requestArticles("", { page: 1, pageSize: 10, orderBy: OrderBy.Newest });

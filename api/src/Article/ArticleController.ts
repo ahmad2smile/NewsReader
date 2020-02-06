@@ -5,11 +5,20 @@ import { RequestHandler } from "../utils/requestDecorator";
 
 export class ArticleController {
 	@RequestHandler<PaginatedResult<Article>>()
-	public get(req: Request, res: Response): Promise<PaginatedResult<Article>> {
+	public async get(
+		req: Request,
+		res: Response
+	): Promise<PaginatedResult<Article>> {
 		const { search, page, pageSize, orderBy } = req.query;
 		const pagination: Pagination = { page, pageSize, orderBy };
 
-		return fetchArticles(search, pagination);
+		const response = await fetchArticles(search, pagination);
+
+		if (!response.results.length) {
+			throw new Error("No results found");
+		}
+
+		return response;
 	}
 
 	@RequestHandler<Article>()
@@ -17,7 +26,7 @@ export class ArticleController {
 		const { id } = req.query;
 
 		if (!id) {
-			throw new Error("id is required for Article details");
+			throw new Error("Invalid Article Link");
 		}
 
 		return articleDetails(id);
