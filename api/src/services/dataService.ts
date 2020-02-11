@@ -1,5 +1,6 @@
 import { Article, PaginatedResult, Pagination } from "shared";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { HttpError } from "../Errors";
 
 const baseURL = "https://content.guardianapis.com";
 
@@ -19,15 +20,17 @@ export const fetchArticles = async (
 	search: string,
 	pagination: Pagination
 ): Promise<PaginatedResult<Article>> => {
-	const response = await guardianApi.get("/search", {
-		params: {
-			q: search,
-			page: pagination.page,
-			"page-size": pagination.pageSize,
-			"order-by": pagination.orderBy,
-			"show-fields": "thumbnail,trailText"
-		}
-	});
+	const response = await guardianApi
+		.get("/search", {
+			params: {
+				q: search,
+				page: pagination.page,
+				"page-size": pagination.pageSize,
+				"order-by": pagination.orderBy,
+				"show-fields": "thumbnail,trailText"
+			}
+		})
+		.catch(requestErrorHandler);
 
 	const res = response.data.response;
 	const results = res.results;
@@ -55,11 +58,13 @@ export const fetchArticles = async (
 };
 
 export const articleDetails = async (id: string): Promise<Article> => {
-	const response = await guardianApi.get(`/${id}`, {
-		params: {
-			"show-fields": "thumbnail,body"
-		}
-	});
+	const response = await guardianApi
+		.get(`/${id}`, {
+			params: {
+				"show-fields": "thumbnail,body"
+			}
+		})
+		.catch(requestErrorHandler);
 
 	const content = response.data.response.content;
 
@@ -73,4 +78,13 @@ export const articleDetails = async (id: string): Promise<Article> => {
 	};
 
 	return article;
+};
+
+const requestErrorHandler = (err: AxiosError) => {
+	const message =
+		err.response?.data?.response?.message ||
+		err.message ||
+		"Something went wrong. Please try again!";
+
+	throw new HttpError(message, err.response?.status);
 };

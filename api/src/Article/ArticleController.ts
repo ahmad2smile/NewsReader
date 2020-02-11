@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import { fetchArticles, articleDetails } from "../services/dataService";
 import { Article, PaginatedResult, Pagination } from "shared";
+
+import { fetchArticles, articleDetails } from "../services/dataService";
+
 import { RequestHandler } from "../utils/requestDecorator";
 
+import { NotFoundError, BadRequest } from "../Errors/";
+
 export class ArticleController {
-	@RequestHandler<PaginatedResult<Article>>()
+	@RequestHandler
 	public async get(
 		req: Request,
 		res: Response
@@ -15,18 +19,18 @@ export class ArticleController {
 		const response = await fetchArticles(search, pagination);
 
 		if (!response.results.length) {
-			throw new Error("No results found");
+			throw new NotFoundError("No results found");
 		}
 
 		return response;
 	}
 
-	@RequestHandler<Article>()
+	@RequestHandler
 	public details(req: Request, res: Response): Promise<Article> {
 		const { id } = req.query;
 
-		if (!id) {
-			throw new Error("Invalid Article Link");
+		if (!id || id === `""`) {
+			throw new BadRequest("Invalid Article Link");
 		}
 
 		return articleDetails(id);

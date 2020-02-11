@@ -4,6 +4,8 @@ import helmet from "helmet";
 
 import { articleRouter } from "./Article/router";
 
+import { errorHandler } from "./middlewares/errorHandlerMiddleware";
+
 // tslint:disable-next-line: no-var-requires
 require("dotenv").config();
 
@@ -22,6 +24,9 @@ app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 
 app.use("/api/articles", articleRouter);
+
+// MUST BE LAST MIDDLEWARE
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
