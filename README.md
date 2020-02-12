@@ -16,7 +16,7 @@ Hosting: App is hosted on **Azure** in **Azure AppServices** on [https://news-re
 
 ## Usage:
 
-On `bash` supported system:
+Using `make` (commands are `Windows` supported)
 
 ```bash
 make start
