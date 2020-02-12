@@ -1,37 +1,86 @@
-import { useState, useEffect } from "react";
+import { useReducer, useEffect, Reducer } from "react";
 import { PaginatedResult, Article, OrderBy, Pagination } from "shared";
 
 import { useDebounce } from "./debounceHook";
+
 import { getArticles, apiErrorHandler } from "../../../services/dataService";
+import { useHistory } from "react-router-dom";
+
+interface State extends PaginatedResult<Article> {
+	search: string;
+	error: string;
+	loading: boolean;
+	orderBy: OrderBy;
+}
+
+const initialState: State = {
+	results: [],
+	orderBy: OrderBy.Newest,
+	pageSize: 10,
+	currentPage: 1,
+	pages: 1,
+	startIndex: 1,
+	total: 0,
+	search: new URLSearchParams(window.location.search).get("search") || "",
+	error: "",
+	loading: false
+};
+
+const reducer = (state: State, payload: Partial<State>): State => ({
+	...state,
+	...payload
+});
 
 export const useArticles = () => {
+	const { push, location } = useHistory();
 	const [
-		{ results: articles, total, currentPage, pageSize, pages },
-		setArticleResults
-	] = useState<PaginatedResult<Article>>({
-		results: [],
-		orderBy: OrderBy.Newest,
-		pageSize: 10,
-		currentPage: 1,
-		pages: 1,
-		startIndex: 1,
-		total: 0
-	});
-	const [error, setError] = useState("");
-	const [loading, setLoading] = useState(true);
+		{
+			results: articles,
+			orderBy,
+			pageSize,
+			currentPage,
+			pages,
+			total,
+			search,
+			error,
+			loading
+		},
+		setState
+	] = useReducer(reducer, initialState);
 
-	const [search, setSearch] = useState("");
-	const [orderBy, setOrderBy] = useState(OrderBy.Newest);
 	const debounceSearch = useDebounce(search, 500);
 
+	const updateSearchQuery = (_search: string) => {
+		const updatedPath: any = {
+			pathname: location.pathname
+		};
+
+		if (_search) {
+			// tslint:disable-next-line: no-string-literal
+			updatedPath["search"] = `?search=${_search}`;
+		}
+
+		push(updatedPath);
+	};
+
 	const requestArticles = (_search: string, newFilter: Pagination) => {
-		setLoading(true);
-		setError("");
+		setState({
+			loading: true,
+			error: ""
+		});
+
+		updateSearchQuery(_search);
 
 		getArticles(_search, newFilter)
-			.then(setArticleResults)
-			.catch(apiErrorHandler(setError))
-			.finally(() => setLoading(false));
+			.then(setState)
+			.catch(
+				apiErrorHandler((err: string) =>
+					setState({
+						error: err
+					})
+				)
+			)
+			.finally(() => setState({ loading: false }));
 	};
 
 	useEffect(() => {
@@ -43,24 +92,18 @@ export const useArticles = () => {
 	}, [debounceSearch, orderBy]);
 
 	useEffect(() => {
-		requestArticles("", { page: 1, pageSize: 10, orderBy: OrderBy.Newest });
+		requestArticles(search, {
+			page: 1,
+			pageSize: 10,
+			orderBy: OrderBy.Newest
+		});
 	}, []);
 
-	const setPage = (page: number) => {
-		requestArticles(search, {
-			orderBy,
-			pageSize: 10,
-			page
-		});
-	};
-
-	const setPageSize = (_pageSize: number) => {
-		requestArticles(search, {
-			orderBy,
-			pageSize: _pageSize,
-			page: currentPage
-		});
-	};
+	const setSearch = (_search: string) => setState({ search: _search });
+	const setOrderBy = (_orderBy: OrderBy) => setState({ orderBy: _orderBy });
+	const setPage = (page: number) => setState({ currentPage: page });
+	const setPageSize = (_pageSize: number) =>
+		setState({ pageSize: _pageSize });
 
 	return {
 		articles,

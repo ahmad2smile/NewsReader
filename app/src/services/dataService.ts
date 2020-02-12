@@ -14,9 +14,13 @@ const api = axios.create({
 const CancelToken = axios.CancelToken;
 let cancel: Canceler;
 
-export const apiErrorHandler = (callBack: Function) => (error: any) => {
+export const apiErrorHandler = (callBack: (error: string) => void) => (
+	error: any
+) => {
 	if (axios.isCancel(error)) {
-		console.log("Request canceled", error.message);
+		if (process.env.NODE_ENV === "development")
+			// tslint:disable-next-line: no-console
+			console.error("Request canceled", error.message);
 	} else {
 		const message =
 			error.response?.data?.message ||
@@ -29,7 +33,10 @@ export const getArticles = async (
 	search: string,
 	pagination: Pagination
 ): Promise<PaginatedResult<Article>> => {
-	cancel && cancel(); // cancel previous requests
+	// cancel previous requests
+	if (cancel) {
+		cancel();
+	}
 
 	const query = `search=${search}&page=${pagination.page}&pageSize=${pagination.pageSize}&orderBy=${pagination.orderBy}`;
 
