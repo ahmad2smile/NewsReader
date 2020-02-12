@@ -5,10 +5,10 @@
 	"license": "MIT",
 	"scripts": {
 		"start": "node dist/index.js",
-		"start:dev": "npm run build && nodemon dist/index.js",
-		"build": "tsc",
+		"start:dev": "concurrently \"npm:build:dev\" \"npm:start:run\"",
+		"start:run": "tsc && nodemon dist/index.js",
 		"build:dev": "tsc --watch --preserveWatchOutput",
-		"dev": "concurrently \"npm:build:dev\" \"npm:start:dev\""
+		"build": "tsc"
 	},
 	"dependencies": {
 		"axios": "^0.19.2",
