@@ -36,6 +36,7 @@ const Dashboard = () => {
 
 	const requestArticles = (search: string, newFilter: Pagination) => {
 		setLoading(true);
+		setError("");
 
 		getArticles(search, newFilter)
 			.then(setArticleResults)
