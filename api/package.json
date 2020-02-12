@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"scripts": {
 		"start": "node dist/index.js",
-		"start:dev": "concurrently \"npm:build:dev\" \"npm:start:run\"",
+		"dev": "concurrently \"npm:build:dev\" \"npm:start:run\"",
 		"start:run": "tsc && nodemon dist/index.js",
 		"build:dev": "tsc --watch --preserveWatchOutput",
 		"build": "tsc"
